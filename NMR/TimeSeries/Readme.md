@@ -6,13 +6,13 @@ Use narrow integration ranges for best results
 For the narrow traces, concentrations can be obtained by dividing by 0.006498/µM for cis_narrow and 0.008528/µM for trans_narrow
 
 ## W392Y
-TS1
+### TS1
 
 Convert raw integrals to concentrations by dividing by 31950 ± 170 /µM
 
 Dilution adjusted pre mixing concentrations of cis and trans were: 74.8 ± 0.7 and 240 ± 1 µM
 
-TS2
+### TS2
 
 Convert raw integrals to concentrations by dividing by 34426 ± 201 /µM
 
