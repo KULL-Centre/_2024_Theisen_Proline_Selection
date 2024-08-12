@@ -1,3 +1,7 @@
+# Python script for analysis of 14-3-3 complexes
+# Should be executed in pymol command line
+# Frederik Friis Theisen 2024, University of Copenhagen
+
 import re
 import statistics
 
@@ -17,9 +21,8 @@ ONE_LETTER = {
 }
 
 DATABASE_FILE = "./14_3_3_ComplexPDBIDs.txt"  # File with PDB ids
-SKIP_IDS = {'7ZMW', '7ZMU', '6TCH', '3MVH', '5OMA', '1G6G', '7MFF', '1IB1', '6Q0K', '6G6X', '8A65','3EFZ'}
+SKIP_IDS = {'7ZMW', '7ZMU', '6TCH', '3MVH', '5OMA', '1G6G', '7MFF', '1IB1', '6Q0K', '6G6X', '8A65','3EFZ'} # PDB IDs have some disqualifying property
 ISOFORMS = ['alpha','alpha/beta','beta/alpha','theta','zeta','delta','sigma','eta','epsilon','gamma']
-SMALL_MOLECULE_MASS_IGNORE_LIST = set()
 GROUP_BY_MOTIF = False
 PHOS_BUFFER = [0, 2]
 DICTIONARYKEYS = []
