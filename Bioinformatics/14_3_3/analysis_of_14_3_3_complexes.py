@@ -46,72 +46,28 @@ def write_groups(peptides, filename=""):
 
                 f.write(f"{','.join(line)}\n")
 
-def write_fasta(arr, conformation='trans'):
-    fasta_list = {}
-    for entry in arr:
-        name = entry[0]
-        seq = entry[5].replace('[TPO]', 'T').replace('[SEP]', 'S')
-        if name not in fasta_list or len(fasta_list[name]) < len(seq):
-            fasta_list[name] = seq
-
-    with open(f"{conformation}.fasta", 'w') as f:
-        for name, seq in fasta_list.items():
-            f.write(f">{name}_{conformation}\n{seq}\n")
-
-def split_by_phos_res(file):
-    tpo_lines = []
-    sep_lines = []
-    with open(file) as f:
-        for line in f:
-            if 'TPO' in line:
-                tpo_lines.append(line)
-            else:
-                sep_lines.append(line)
-
-    with open(file.replace(".txt", "_TPO.txt"), 'w') as f:
-        f.writelines(tpo_lines)
-
-    with open(file.replace(".txt", "_SEP.txt"), 'w') as f:
-        f.writelines(sep_lines)
-
-def align_structured(peptides):
-    models = []
-    for id in (v[0] for v in peptides):
-        cmd.fetch(id)
-        cmd.select('PHOS', f'{id} and (resn SEP or resn TPO) and visible')
-        residues = {'data': []}
-        cmd.iterate('PHOS and n. CA', 'data.append([resi, chain])', space=residues)
-        unique_chains = set()
-        for res in residues['data']:
-            if res[1] not in unique_chains:
-                unique_chains.add(res[1])
-                cmd.select('probe', f'{id} and chain {res[1]} and resi {res[0]}')
-                cmd.do('select probe, probe extend 7')
-                cmd.select('monomer', f'{id} within 7 of probe')
-                cmd.do('select monomer, bymolecule monomer')
-                mdl = f"{id}_{len(models) + 1}"
-                cmd.extract(mdl, 'monomer')
-                models.append(mdl)
-        cmd.delete(id)
-    cmd.do('remove solvent')
-    for mdl in models:
-        cmd.do(f'align {mdl}, {models[4]}')
-
-def get_angle_for_motifs():
-    omega_motif = {}
-    for v1 in ONE_LETTER.values():
-        for v2 in ONE_LETTER.values():
-            omega_motif[v1+v2] = []
-
-    for peptide in output.values():
-        for pep in peptide:
-            if pep[3] in omega_motif:
-                omega_motif[pep[3]].append(pep[4])
-
-    for key, motif_angles in omega_motif.items():
-        if motif_angles:
-            angles_str = ' '.join(f'{angle:.1f}' for angle in motif_angles)
-            print(f"{key} {angles_str}")
+# def align_structured(peptides):
+#     models = []
+#     for id in (v[0] for v in peptides):
+#         cmd.fetch(id)
+#         cmd.select('PHOS', f'{id} and (resn SEP or resn TPO) and visible')
+#         residues = {'data': []}
+#         cmd.iterate('PHOS and n. CA', 'data.append([resi, chain])', space=residues)
+#         unique_chains = set()
+#         for res in residues['data']:
+#             if res[1] not in unique_chains:
+#                 unique_chains.add(res[1])
+#                 cmd.select('probe', f'{id} and chain {res[1]} and resi {res[0]}')
+#                 cmd.do('select probe, probe extend 7')
+#                 cmd.select('monomer', f'{id} within 7 of probe')
+#                 cmd.do('select monomer, bymolecule monomer')
+#                 mdl = f"{id}_{len(models) + 1}"
+#                 cmd.extract(mdl, 'monomer')
+#                 models.append(mdl)
+#         cmd.delete(id)
+#     cmd.do('remove solvent')
+#     for mdl in models:
+#         cmd.do(f'align {mdl}, {models[4]}')
 
 def group_by_peptide(peptides):
     output = {}
@@ -260,9 +216,6 @@ def get_isoform_from_cif(pdb_id):
         else: isoform = isoform[:-1]
 
     return isoform
-
-def process_peptides():
-    quit()
 
 def main():
     global DICTIONARYKEYS
